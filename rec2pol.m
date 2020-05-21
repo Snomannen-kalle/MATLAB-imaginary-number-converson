@@ -5,27 +5,33 @@ function [theta,rho] = rec2pol(varargin)
 % Angle format must be either 'rad' or 'deg'. Output argument format is 
 % first the magnitude, then the angle
 
-if nargin == 1
-    theta = abs( varargin{:} );
-    rho = atand( imag( varargin{:} )/real( varargin{:} ) );
-    if real( varargin{:} ) == 0 && imag( varargin{:} ) < 0
-        rho = -rho;
-    end
-elseif nargin == 2
-    num = varargin{:,1};
-    angle_format = varargin{:,2};
-    if angle_format == 'deg'
-        rho = atand( imag( num )/real( num ) );
-    elseif angle_format == 'rad'
-        rho = atan( imag( num )/real( num ) );
-    else
-        error('Second input argument must be either deg or rad')
-    end
-    if real( num ) == 0 && imag( num ) < 0
-        rho = -rho;
-    end
-    theta = abs( num );
+num = varargin{:,1};
+theta = abs( num );
+rho = atand( imag( num )/real( num ) );
+
+if real( num ) == 0 && imag( num ) < 0
+    rho = -rho;
+elseif real( num ) < 0 && imag( num ) > 0
+    rho = 180 - abs( rho );
+elseif real( num ) < 0 && imag( num ) < 0
+    rho = abs( rho ) - 180;
 else
-    error('There can only be two input arguments')
+    return
 end
+
+if nargin == 1
+    return
+elseif nargin == 2
+    number_format = varargin{:,2};
+    if strcmp(number_format, 'deg')
+        return
+    else
+        rho = deg2rad( rho );
+    end
+elseif nargin >= 3
+    error('There can only be two input arguments')
+else
+    return
+end
+
 end
