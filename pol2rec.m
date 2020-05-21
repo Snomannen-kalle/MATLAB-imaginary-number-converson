@@ -5,26 +5,28 @@ function [num] = pol2rec(varargin)
 % are specified, the standard angle format is degrees. Angle format
 % must be either 'rad' or 'deg'
 
-if nargin == 2
-    theta = varargin{:,1};
-    rho = varargin{:,2};
-    re = theta*cosd(rho);
-    im = theta*sind(rho);
-elseif nargin == 3
-    theta = varargin{:,1};
-    rho = varargin{:,2};
+theta = varargin{:,1};
+rho = varargin{:,2};
+
+if nargin == 3
     angle_format = varargin{:,3};
-    if angle_format == 'deg'
-        re = theta*cosd(rho);
-        im = theta*sind(rho);
-    elseif angle_format == 'rad'
-        re = theta*cos(rho);
-        im = theta*sin(rho);
-    else
+    if strcmp( angle_format,'rad' ) == true
+        rho = rad2deg( rho );
+    elseif strcmp( angle_format,'deg' )  ~= true
         error('Third input argument must be either rad or deg')
     end
-else
+elseif nargin > 3
     error('There must be two input arguments')
 end
+
+if theta < 0
+    theta = abs( theta );
+    rho = rho - 180;
+end
+
+re = theta*cosd( rho );
+im = theta*sind( rho );
+
 num = re + 1i*im;
+
 end
